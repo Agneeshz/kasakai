@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kasakai/pages/carousel.dart';
 import 'package:kasakai/pages/home.dart';
 
 void main() {

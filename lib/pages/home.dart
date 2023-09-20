@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:kasakai/pages/contact.dart';
+import 'package:kasakai/pages/merchandise.dart';
+import 'package:kasakai/pages/open_mic.dart';
 import 'package:kasakai/pages/turf.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -152,7 +155,7 @@ class _HomeState extends State<Home> {
                 ),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const Turf()));
+                      MaterialPageRoute(builder: (context) => const OpenMic()));
                 },
               ),
               ListTile(
@@ -165,8 +168,8 @@ class _HomeState extends State<Home> {
                   style: TextStyle(fontSize: 17, color: Colors.white),
                 ),
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const Turf()));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const Merchandise()));
                 },
               ),
               ListTile(
@@ -180,7 +183,7 @@ class _HomeState extends State<Home> {
                 ),
                 onTap: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const Turf()));
+                      MaterialPageRoute(builder: (context) => const Contact()));
                 },
               ),
             ],
