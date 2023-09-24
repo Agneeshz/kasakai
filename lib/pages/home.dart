@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:kasakai/pages/auth.dart';
 import 'package:kasakai/pages/contact.dart';
 import 'package:kasakai/pages/merchandise.dart';
 import 'package:kasakai/pages/open_mic.dart';
 import 'package:kasakai/pages/turf.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
 
 final List<String> imgList = [
   'assets/1.png',
@@ -56,14 +58,33 @@ final List<Widget> imageSliders = imgList
         ))
     .toList();
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Home extends StatelessWidget {
+  Home({super.key}) {
+    // loadUser();
+  }
+  // loadUser() async {
+  //   final results = await Auth().getLogin();
+  //   print(results.length);
+  //   results.forEach((element) {
+  //     print(element.email);
+  //   });
+  // }
 
-  @override
-  State<Home> createState() => _HomeState();
-}
+  postData() async {
+    try {
+      var response = await http.post(
+          Uri.parse("https://www.kkmapi.online/api/v1/auth/login/"),
+          body: {
+            "username": "",
+            "email": "",
+            "password": "",
+          });
+      print(response.body);
+    } catch (e) {
+      print(e);
+    }
+  }
 
-class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,8 +147,8 @@ class _HomeState extends State<Home> {
                   style: TextStyle(fontSize: 17, color: Colors.white),
                 ),
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const Home()));
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => Home()));
                 },
               ),
               ListTile(

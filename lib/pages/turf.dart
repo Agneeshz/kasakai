@@ -77,8 +77,8 @@ class _TurfState extends State<Turf> {
                     style: TextStyle(fontSize: 17, color: Colors.white),
                   ),
                   onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const Home()));
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) => Home()));
                   },
                 ),
                 ListTile(

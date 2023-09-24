@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kasakai/pages/home.dart';
+import 'package:kasakai/pages/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,10 +12,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Kasakai Mumbai',
-      home: Home(),
+      home: LoginPage(),
       // home: CarouselDemo(),
     );
   }
