@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kasakai/pages/home.dart';
 import 'package:kasakai/pages/login_page.dart';
 
 void main() {

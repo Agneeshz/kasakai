@@ -1,8 +1,62 @@
+import 'dart:convert';
+// import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:kasakai/pages/home.dart';
 import '/components/my_button.dart';
 import '/components/my_textfield.dart';
 import '/components/square_tile.dart';
 import 'package:http/http.dart' as http;
+
+class Response {
+  String? accessToken;
+  String? refreshToken;
+  User? user;
+
+  Response({this.accessToken, this.refreshToken, this.user});
+
+  Response.fromJson(Map<String, dynamic> json) {
+    accessToken = json['access_token'];
+    refreshToken = json['refresh_token'];
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['access_token'] = accessToken;
+    data['refresh_token'] = refreshToken;
+    if (user != null) {
+      data['user'] = user!.toJson();
+    }
+    return data;
+  }
+}
+
+class User {
+  int? pk;
+  String? email;
+  String? firstName;
+  String? lastName;
+
+  User({this.pk, this.email, this.firstName, this.lastName});
+
+  User.fromJson(Map<String, dynamic> json) {
+    pk = json['pk'];
+    email = json['email'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['pk'] = pk;
+    data['email'] = email;
+    data['first_name'] = firstName;
+    data['last_name'] = lastName;
+    return data;
+  }
+}
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -13,20 +67,27 @@ class LoginPage extends StatelessWidget {
   final passwordController = TextEditingController();
 
   // sign user in method
-  void signUserIn() async {
-    try {
-      var response = await http.post(
-          Uri.parse("https://www.kkmapi.online/api/v1/auth/login/"),
-          body: {
-            "username": "Username",
-            "email": emailController.text,
-            "password": passwordController.text,
-          });
-      print(response.body + " successful");
-    } catch (e) {
-      print(e);
-    }
-  }
+  // void signUserIn() async {
+  //   print("yes");
+  //   try {
+  //     bool check;
+  //     var response = await http.post(
+  //         Uri.parse("https://www.kkmapi.online/api/v1/auth/login/"),
+  //         body: {
+  //           "username": "Username",
+  //           "email": emailController.text,
+  //           "password": passwordController.text,
+  //         });
+  //     print(response.body);
+  //     Response res = Response.fromJson(jsonDecode(response.body));
+  //     if (res.accessToken != null) {
+  //       check = true;
+  //       return check;
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +164,33 @@ class LoginPage extends StatelessWidget {
 
                 // sign in button
                 MyButton(
-                  onTap: signUserIn,
+                  onTap: () async {
+                    print("yes");
+                    try {
+                      var response = await http.post(
+                          Uri.parse(
+                              "https://www.kkmapi.online/api/v1/auth/login/"),
+                          body: {
+                            "username": "Username",
+                            "email": emailController.text,
+                            "password": passwordController.text,
+                          });
+                      print(response.body);
+                      Response res =
+                          Response.fromJson(jsonDecode(response.body));
+                      // Storing the token
+                      const storage = FlutterSecureStorage();
+                      await storage.write(
+                          key: 'auth_token', value: res.accessToken);
+                      if (res.accessToken != null) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => Home()));
+                      }
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
                 ),
 
                 const SizedBox(height: 50),
@@ -139,9 +226,9 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(height: 50),
 
                 // google + apple sign in buttons
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     // google button
                     SquareTile(imagePath: 'assets/google.png'),
 

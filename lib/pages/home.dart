@@ -1,13 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:kasakai/pages/auth.dart';
 import 'package:kasakai/pages/contact.dart';
+import 'package:kasakai/pages/detail.dart';
+// import 'package:kasakai/pages/detail.dart';
 import 'package:kasakai/pages/merchandise.dart';
 import 'package:kasakai/pages/open_mic.dart';
 import 'package:kasakai/pages/turf.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final List<String> imgList = [
   'assets/1.png',
@@ -17,6 +19,291 @@ final List<String> imgList = [
   'assets/5.png',
   'assets/6.png',
 ];
+
+class Article {
+  int? statusCode;
+  Articles? articles;
+
+  Article({this.statusCode, this.articles});
+
+  Article.fromJson(Map<String, dynamic> json) {
+    statusCode = json['status_code'];
+    articles = json['articles'] != null
+        ? new Articles.fromJson(json['articles'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status_code'] = this.statusCode;
+    if (this.articles != null) {
+      data['articles'] = this.articles!.toJson();
+    }
+    return data;
+  }
+}
+
+class Articles {
+  int? count;
+  // Null? next;
+  // Null? previous;
+  List<Results>? results;
+
+  Articles({this.count, this.results});
+
+  Articles.fromJson(Map<String, dynamic> json) {
+    count = json['count'];
+    // next = json['next'];
+    // previous = json['previous'];
+    if (json['results'] != null) {
+      results = <Results>[];
+      json['results'].forEach((v) {
+        results!.add(new Results.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['count'] = this.count;
+    // data['next'] = this.next;
+    // data['previous'] = this.previous;
+    if (this.results != null) {
+      data['results'] = this.results!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Results {
+  String? id;
+  String? title;
+  String? slug;
+  List<String>? tags;
+  int? estimatedReadingTime;
+  AuthorInfo? authorInfo;
+  int? views;
+  String? description;
+  String? body;
+  String? bannerImage;
+  double? averageRating;
+  int? bookmarksCount;
+  List<Bookmarks>? bookmarks;
+  int? clapsCount;
+  List<Responses>? responses;
+  int? responsesCount;
+  String? createdAt;
+  String? updatedAt;
+
+  Results(
+      {this.id,
+      this.title,
+      this.slug,
+      this.tags,
+      this.estimatedReadingTime,
+      this.authorInfo,
+      this.views,
+      this.description,
+      this.body,
+      this.bannerImage,
+      this.averageRating,
+      this.bookmarksCount,
+      this.bookmarks,
+      this.clapsCount,
+      this.responses,
+      this.responsesCount,
+      this.createdAt,
+      this.updatedAt});
+
+  Results.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    slug = json['slug'];
+    tags = json['tags'].cast<String>();
+    estimatedReadingTime = json['estimated_reading_time'];
+    authorInfo = json['author_info'] != null
+        ? new AuthorInfo.fromJson(json['author_info'])
+        : null;
+    views = json['views'];
+    description = json['description'];
+    body = json['body'];
+    bannerImage = json['banner_image'];
+    averageRating = json['average_rating'];
+    bookmarksCount = json['bookmarks_count'];
+    if (json['bookmarks'] != null) {
+      bookmarks = <Bookmarks>[];
+      json['bookmarks'].forEach((v) {
+        bookmarks!.add(new Bookmarks.fromJson(v));
+      });
+    }
+    clapsCount = json['claps_count'];
+    if (json['responses'] != null) {
+      responses = <Responses>[];
+      json['responses'].forEach((v) {
+        responses!.add(new Responses.fromJson(v));
+      });
+    }
+    responsesCount = json['responses_count'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['title'] = this.title;
+    data['slug'] = this.slug;
+    data['tags'] = this.tags;
+    data['estimated_reading_time'] = this.estimatedReadingTime;
+    if (this.authorInfo != null) {
+      data['author_info'] = this.authorInfo!.toJson();
+    }
+    data['views'] = this.views;
+    data['description'] = this.description;
+    data['body'] = this.body;
+    data['banner_image'] = this.bannerImage;
+    data['average_rating'] = this.averageRating;
+    data['bookmarks_count'] = this.bookmarksCount;
+    if (this.bookmarks != null) {
+      data['bookmarks'] = this.bookmarks!.map((v) => v.toJson()).toList();
+    }
+    data['claps_count'] = this.clapsCount;
+    if (this.responses != null) {
+      data['responses'] = this.responses!.map((v) => v.toJson()).toList();
+    }
+    data['responses_count'] = this.responsesCount;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    return data;
+  }
+}
+
+class AuthorInfo {
+  String? firstName;
+  String? lastName;
+  String? fullName;
+  String? email;
+  String? id;
+  String? profilePhoto;
+  String? phoneNumber;
+  String? aboutMe;
+  String? gender;
+  String? country;
+  String? city;
+  String? interests;
+  bool? following;
+
+  AuthorInfo(
+      {this.firstName,
+      this.lastName,
+      this.fullName,
+      this.email,
+      this.id,
+      this.profilePhoto,
+      this.phoneNumber,
+      this.aboutMe,
+      this.gender,
+      this.country,
+      this.city,
+      this.interests,
+      this.following});
+
+  AuthorInfo.fromJson(Map<String, dynamic> json) {
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    fullName = json['full_name'];
+    email = json['email'];
+    id = json['id'];
+    profilePhoto = json['profile_photo'];
+    phoneNumber = json['phone_number'];
+    aboutMe = json['about_me'];
+    gender = json['gender'];
+    country = json['country'];
+    city = json['city'];
+    interests = json['interests'];
+    following = json['following'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['full_name'] = this.fullName;
+    data['email'] = this.email;
+    data['id'] = this.id;
+    data['profile_photo'] = this.profilePhoto;
+    data['phone_number'] = this.phoneNumber;
+    data['about_me'] = this.aboutMe;
+    data['gender'] = this.gender;
+    data['country'] = this.country;
+    data['city'] = this.city;
+    data['interests'] = this.interests;
+    data['following'] = this.following;
+    return data;
+  }
+}
+
+class Bookmarks {
+  int? id;
+  String? userFirstName;
+  String? articleTitle;
+  String? createdAt;
+
+  Bookmarks({this.id, this.userFirstName, this.articleTitle, this.createdAt});
+
+  Bookmarks.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userFirstName = json['user_first_name'];
+    articleTitle = json['article_title'];
+    createdAt = json['created_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_first_name'] = this.userFirstName;
+    data['article_title'] = this.articleTitle;
+    data['created_at'] = this.createdAt;
+    return data;
+  }
+}
+
+class Responses {
+  String? id;
+  String? userFirstName;
+  String? articleTitle;
+  int? parentResponse;
+  String? content;
+  String? createdAt;
+
+  Responses(
+      {this.id,
+      this.userFirstName,
+      this.articleTitle,
+      this.parentResponse,
+      this.content,
+      this.createdAt});
+
+  Responses.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userFirstName = json['user_first_name'];
+    articleTitle = json['article_title'];
+    parentResponse = json['parent_response'];
+    content = json['content'];
+    createdAt = json['created_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_first_name'] = this.userFirstName;
+    data['article_title'] = this.articleTitle;
+    data['parent_response'] = this.parentResponse;
+    data['content'] = this.content;
+    data['created_at'] = this.createdAt;
+    return data;
+  }
+}
 
 final List<Widget> imageSliders = imgList
     .map((item) => Container(
@@ -58,28 +345,42 @@ final List<Widget> imageSliders = imgList
         ))
     .toList();
 
-class Home extends StatelessWidget {
+Article post = Article();
+
+class Home extends StatefulWidget {
   Home({super.key}) {
     // loadUser();
   }
-  // loadUser() async {
-  //   final results = await Auth().getLogin();
-  //   print(results.length);
-  //   results.forEach((element) {
-  //     print(element.email);
-  //   });
-  // }
 
-  postData() async {
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    fetchPost();
+  }
+
+  bool isLoading = true;
+
+  void fetchPost() async {
+    setState(() {
+      isLoading = true;
+    });
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'auth_token');
+    print("artic");
     try {
-      var response = await http.post(
-          Uri.parse("https://www.kkmapi.online/api/v1/auth/login/"),
-          body: {
-            "username": "",
-            "email": "",
-            "password": "",
-          });
+      var response = await http.get(
+        Uri.parse('https://www.kkmapi.online/api/v1/articles/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
       print(response.body);
+      post = Article.fromJson(jsonDecode(response.body));
     } catch (e) {
       print(e);
     }
@@ -87,6 +388,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -211,17 +513,145 @@ class Home extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(children: [
-        // const Text('R E C E N T  E V E N T S'),
-        CarouselSlider(
-          options: CarouselOptions(
-            autoPlay: true,
-            aspectRatio: 2.0,
-            enlargeCenterPage: true,
+      body: Column(
+        children: [
+          // isLoading ? CircularProgressIndicator() : Text('Data Loaded!'),
+          // const Text('R E C E N T  E V E N T S'),
+          CarouselSlider(
+            options: CarouselOptions(
+              autoPlay: true,
+              aspectRatio: 2.0,
+              enlargeCenterPage: true,
+            ),
+            items: imageSliders,
           ),
-          items: imageSliders,
-        ),
-      ]),
+          const SizedBox(
+            width: double.infinity,
+            child: Text(
+              "    TRENDING ARTICLES:",
+              style: TextStyle(
+                fontSize: 26,
+                color: kDefaultIconDarkColor,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          const SizedBox(height: 24.0),
+          GestureDetector(
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => DetailScreen(),
+            )),
+            child: Stack(
+              children: [
+                Container(
+                  height: 250.0,
+                  width: 350.0,
+                  decoration: BoxDecoration(
+                      color: kDefaultIconDarkColor,
+                      borderRadius: BorderRadius.circular(24.0),
+                      image: const DecorationImage(
+                        image: AssetImage("assets/6.png"),
+                        // post.articles!.results[0].bannerImage
+                        fit: BoxFit.cover,
+                      )),
+                ),
+                Positioned(
+                  top: 24.0,
+                  right: 24.0,
+                  child: Container(
+                    height: 34.0,
+                    width: 68.0,
+                    decoration: BoxDecoration(
+                      color: kDefaultIconDarkColor.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 6.0),
+                        Image.asset(
+                          "assets/heart.png",
+                          height: 16.0,
+                          width: 16.0,
+                        ),
+                        const SizedBox(width: 6.0),
+                        Text(
+                          "480",
+                          style: TextStyle(
+                            fontSize: 13.0,
+                            color: kDefaultIconDarkColor.withOpacity(0.75),
+                            fontFamily: "Mulish-SemiBold",
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16.0,
+                      horizontal: 24.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          post.articles?.results?[2].title ?? '',
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                            color: kDefaultIconDarkColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(
+                              "assets/Agneesh_Dasgupta.jpg",
+                              // post.articles!.results?[0].authorInfo.profilePhoto
+                              height: 40.0,
+                              width: 40.0,
+                            ),
+                            SizedBox(width: 12.0),
+                            Expanded(
+                              child: Text(
+                                post.articles?.results?[2].authorInfo!
+                                        .fullName ??
+                                    '',
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: kDefaultIconDarkColor.withOpacity(0.8),
+                                  fontFamily: "Mulish-SemiBold",
+                                ),
+                              ),
+                            ),
+                            Text(
+                              post.articles?.results?[2].updatedAt
+                                      ?.substring(1, 10) ??
+                                  '',
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                color: kDefaultIconDarkColor.withOpacity(0.8),
+                                fontFamily: "Mulish-SemiBold",
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          // SizedBox(height: 24.0),
+        ],
+      ),
     );
   }
 }

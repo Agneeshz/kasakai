@@ -1,5 +1,3 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:kasakai/pages/contact.dart';
 import 'package:kasakai/pages/home.dart';
@@ -141,7 +139,7 @@ class _TurfState extends State<Turf> {
             ),
           ),
         ),
-        body: Column(children: const [
+        body: const Column(children: [
           Text('\n    T U R F  M E E T S', style: TextStyle(fontSize: 17)),
         ]));
   }
