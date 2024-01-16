@@ -392,6 +392,34 @@ class _HomeState extends State<Home> {
     }
   }
 
+  int selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.grey);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Home',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 1: My Events',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: Notification',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 3: Profile',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Size size = MediaQuery.of(context).size;
@@ -548,138 +576,176 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(height: 24.0),
-            // Column(
-            //   children: [
-            //     Expanded(
-            //       child: ListView.builder(
-            //         itemCount: post.articles?.count,
-            //         itemBuilder: (BuildContext context, int 2) {
-            //           const SizedBox(height: 24.0);
-            GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailScreen(),
-              )),
-              child: Stack(
-                children: [
-                  Hero(
-                    tag: "blogImage",
-                    child: Container(
-                      height: 250.0,
-                      width: 350.0,
-                      decoration: BoxDecoration(
-                          color: kDefaultIconDarkColor,
-                          borderRadius: BorderRadius.circular(24.0),
-                          image: const DecorationImage(
-                            image: AssetImage("assets/6.png"),
-                            // post.articles!.results[0].bannerImage
-                            fit: BoxFit.cover,
-                          )),
-                    ),
-                  ),
-                  Positioned(
-                    top: 24.0,
-                    right: 24.0,
-                    child: Hero(
-                      tag: "likes",
-                      child: Container(
-                        height: 34.0,
-                        width: 68.0,
-                        decoration: BoxDecoration(
-                          color: kDefaultIconDarkColor.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                        child: Row(
+            Expanded(
+              child: Container(
+                child: ListView.builder(
+                  itemCount: post.articles?.count,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      child: GestureDetector(
+                        onTap: () =>
+                            Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => DetailScreen(
+                            index: index,
+                          ),
+                        )),
+                        child: Stack(
+                          alignment: AlignmentDirectional.center,
                           children: [
-                            const SizedBox(width: 6.0),
-                            Image.asset(
-                              "assets/heart.png",
-                              height: 16.0,
-                              width: 16.0,
+                            Hero(
+                              tag: "blogImage",
+                              child: Container(
+                                height: 300.0,
+                                width: 400.0,
+                                decoration: BoxDecoration(
+                                    color: kDefaultIconDarkColor,
+                                    borderRadius: BorderRadius.circular(24.0),
+                                    image: const DecorationImage(
+                                      image: AssetImage("assets/6.png"),
+                                      // post.articles!.results[0].bannerImage
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
                             ),
-                            const SizedBox(width: 6.0),
-                            Text(
-                              post.articles?.results?[2].clapsCount
-                                      .toString() ??
-                                  '',
-                              style: TextStyle(
-                                fontSize: 13.0,
-                                color: kDefaultIconLightColor.withOpacity(0.75),
-                                fontFamily: "Mulish-SemiBold",
+                            Positioned(
+                              top: 24.0,
+                              right: 24.0,
+                              child: Hero(
+                                tag: "likes",
+                                child: Container(
+                                  height: 34.0,
+                                  width: 68.0,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        kDefaultIconDarkColor.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(50.0),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(width: 6.0),
+                                      Image.asset(
+                                        "assets/heart.png",
+                                        height: 16.0,
+                                        width: 16.0,
+                                      ),
+                                      const SizedBox(width: 6.0),
+                                      Text(
+                                        post.articles?.results?[2].clapsCount
+                                                .toString() ??
+                                            '',
+                                        style: TextStyle(
+                                          fontSize: 13.0,
+                                          color: kDefaultIconLightColor
+                                              .withOpacity(0.75),
+                                          fontFamily: "Mulish-SemiBold",
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0.0,
+                              left: 0.0,
+                              right: 0.0,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0,
+                                  horizontal: 24.0,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      post.articles?.results?[index].title ??
+                                          '',
+                                      style: const TextStyle(
+                                        fontSize: 20.0,
+                                        color: kDefaultIconDarkColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Hero(
+                                          tag: "BlogUserProfile",
+                                          child: Image.asset(
+                                            "assets/Agneesh_Dasgupta.jpg",
+                                            // post.articles!.results?[0].authorInfo.profilePhoto
+                                            height: 40.0,
+                                            width: 40.0,
+                                          ),
+                                        ),
+                                        SizedBox(width: 12.0),
+                                        Expanded(
+                                          child: Text(
+                                            post.articles?.results?[index]
+                                                    .authorInfo!.fullName ??
+                                                '',
+                                            style: TextStyle(
+                                              fontSize: 15.0,
+                                              color: kDefaultIconDarkColor
+                                                  .withOpacity(0.8),
+                                              fontFamily: "Mulish-SemiBold",
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          post.articles?.results?[index]
+                                                  .updatedAt
+                                                  ?.substring(1, 10) ??
+                                              '',
+                                          style: TextStyle(
+                                            fontSize: 15.0,
+                                            color: kDefaultIconDarkColor
+                                                .withOpacity(0.8),
+                                            fontFamily: "Mulish-SemiBold",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 24.0,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            post.articles?.results?[2].title ?? '',
-                            style: const TextStyle(
-                              fontSize: 20.0,
-                              color: kDefaultIconDarkColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Hero(
-                                tag: "BlogUserProfile",
-                                child: Image.asset(
-                                  "assets/Agneesh_Dasgupta.jpg",
-                                  // post.articles!.results?[0].authorInfo.profilePhoto
-                                  height: 40.0,
-                                  width: 40.0,
-                                ),
-                              ),
-                              SizedBox(width: 12.0),
-                              Expanded(
-                                child: Text(
-                                  post.articles?.results?[2].authorInfo!
-                                          .fullName ??
-                                      '',
-                                  style: TextStyle(
-                                    fontSize: 15.0,
-                                    color:
-                                        kDefaultIconDarkColor.withOpacity(0.8),
-                                    fontFamily: "Mulish-SemiBold",
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                post.articles?.results?[2].updatedAt
-                                        ?.substring(1, 10) ??
-                                    '',
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  color: kDefaultIconDarkColor.withOpacity(0.8),
-                                  fontFamily: "Mulish-SemiBold",
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
+                    );
+                  },
+                ),
               ),
             ),
-            // },
           ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event),
+              label: 'My Events',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications),
+              label: 'Notification',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Profile',
+            ),
+          ],
+          currentIndex: selectedIndex,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey,
+          onTap: _onItemTapped,
         ),
       );
       // ],

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'home.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({super.key});
+  var index;
+  DetailScreen({super.key, required this.index});
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -23,7 +24,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: Image.asset(
                     "assets/1.png",
                     height: 400.0,
-                    width: 400.0,
+                    width: 500.0,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -71,7 +72,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       Container(
                           width: 200.0,
                           child: Text(
-                            post.articles!.results?[2].title ?? '',
+                            post.articles!.results?[widget.index].title ?? '',
                             style: TextStyle(
                                 fontSize: 24.0,
                                 color: kDefaultIconDarkColor,
@@ -96,7 +97,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               ),
                               const SizedBox(width: 6.0),
                               Text(
-                                post.articles!.results?[2].clapsCount
+                                post.articles!.results?[widget.index].clapsCount
                                         .toString() ??
                                     '',
                                 style: TextStyle(
